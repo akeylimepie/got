@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width">
+    <title>GoT</title>
+
+    <style>
+        html, body {
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #roll {
+            font-size: 10rem;
+        }
+
+        #result {
+            font-size: 10rem;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            hr {
+                width: 100%;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+<button id="roll" autofocus>🎲</button>
+
+<div id="result" class="hidden">
+    <span id="first">+1</span>
+    <hr/>
+    <span id="second">0</span>
+</div>
+
+<script>
+    function shuffle (array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]]
+        }
+        return array
+    }
+
+    function getRandomInt (max) {
+        return Math.floor(Math.random() * max)
+    }
+
+    const cards = [
+        '+0',
+        '+0',
+        '+0',
+        '+0',
+        '+0',
+        '+0',
+        '+0',
+        '+0',
+        '+0 💀',
+        '+0 💀',
+        '+1 🏰',
+        '+1 🏰',
+        '+1 🏰',
+        '+1 🏰',
+        '+1 🗡️',
+        '+1 🗡️',
+        '+1 🗡️',
+        '+1 🗡️',
+        '+2',
+        '+2',
+        '+2',
+        '+2',
+        '+3',
+        '+3',
+    ]
+
+    document.getElementById('roll').addEventListener('click', () => {
+        let shuffledCards = shuffle(cards)
+
+        document.getElementById('first').innerText = shuffledCards.pop()
+        document.getElementById('second').innerText = shuffledCards.pop()
+
+        document.getElementById('roll').classList.add('hidden')
+        document.getElementById('result').classList.remove('hidden')
+    })
+</script>
+
+</body>
+</html>
