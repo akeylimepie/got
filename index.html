@@ -7,6 +7,10 @@
     <title>GoT</title>
 
     <style>
+        :root {
+            color-scheme: light dark;
+        }
+
         html, body {
             min-height: 100vh;
             padding: 0;
@@ -21,6 +25,10 @@
 
         #roll {
             font-size: 10rem;
+
+            appearance: none;
+            border: none;
+            background: none;
         }
 
         #result {
@@ -42,7 +50,7 @@
 </head>
 <body>
 
-<button id="roll" autofocus>🎲</button>
+<button id="roll">🎲</button>
 
 <div id="result" class="hidden">
     <span id="first">+1</span>
