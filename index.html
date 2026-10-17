@@ -1,72 +1,259 @@
 <!doctype html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width">
-    <title>GoT</title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Tides of Battle</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@600&family=Cinzel:wght@600&family=Fira+Sans+Extra+Condensed:wght@600;700&display=swap">
     <style>
         :root {
-            color-scheme: light dark;
+            --table: #111214;
+            --glow: #24201d;
+            --ink: #e6ddcf;
+            --gold: #c9a24a;
+            --gold-dim: #6e5a32;
+            --gothic: "Grenze Gotisch", "Old English Text MT", serif;
+            --numeral: "Cinzel", "Trajan Pro", Georgia, serif;
+            --caps: "Fira Sans Extra Condensed", "Arial Narrow", sans-serif;
+            --flip: .55s;
+            color-scheme: dark;
+
+            @media (prefers-reduced-motion: reduce) {
+                --flip: 0s;
+            }
         }
 
         html, body {
-            min-height: 100dvh;
-            padding: 0;
+            height: 100%;
             margin: 0;
         }
 
         body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        #roll {
-            font-size: 10rem;
-
-            appearance: none;
-            border: none;
-            background: none;
-            padding: 0;
-        }
-
-        #cards {
-            font-size: 8rem;
-
+            background:
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.08'/%3E%3C/svg%3E"),
+                radial-gradient(120% 70% at 50% 40%, var(--glow) 0%, var(--table) 62%, #09090a 100%);
+            background-color: var(--table);
+            color: var(--ink);
+            font-family: var(--caps);
+            padding-left: max(16px, env(safe-area-inset-left, 0px));
+            padding-right: max(16px, env(safe-area-inset-right, 0px));
+            padding-block: 18px 22px;
+            box-sizing: border-box;
             display: flex;
             flex-direction: column;
             align-items: center;
+            gap: 22px;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-            hr, #stack {
-                width: 100%;
-                margin-block: 100px;
+        .wrap {
+            width: 100%;
+            max-width: 440px;
+        }
+
+        header, footer {
+            height: 2rem;
+        }
+
+        h1 {
+            margin: 0;
+            font-family: var(--gothic);
+            font-weight: 600;
+            font-size: 2rem;
+            line-height: .95;
+            text-align: center;
+            color: var(--ink);
+        }
+
+        .table {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .seat {
+            flex: 1;
+            display: grid;
+            gap: 10px;
+            justify-items: center;
+            min-width: 0;
+        }
+
+        .role {
+            text-transform: uppercase;
+            font-weight: 700;
+            font-size: .8rem;
+            letter-spacing: .2em;
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            &::before, &::after {
+                content: "";
+                width: 14px;
+                height: 1px;
+                background: var(--gold-dim);
             }
         }
 
-        #stack {
-            font-size: 5px;
-            text-align: center;
+        .card {
+            width: 100%;
+            aspect-ratio: 2 / 3;
+            perspective: 900px;
+            cursor: pointer;
+            border: none;
+            padding: 0;
+            background: none;
+            font: inherit;
+            color: inherit;
+
+            &.dealt {
+                animation: deal .45s cubic-bezier(.2, .8, .2, 1) both;
+
+                @media (prefers-reduced-motion: reduce) {
+                    animation: none;
+                }
+            }
+
+            .seat:nth-child(2) &.dealt {
+                animation-delay: .08s;
+            }
+
+            &.revealed .inner {
+                transform: rotateY(180deg);
+            }
         }
 
-        .hidden {
-            display: none !important;
+        .inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform var(--flip) cubic-bezier(.3, .7, .2, 1);
+        }
+
+        .face {
+            position: absolute;
+            inset: 0;
+            border-radius: 7% / 4.7%;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            box-shadow: 0 14px 28px -10px rgba(0, 0, 0, .9), 0 2px 4px rgba(0, 0, 0, .6);
+            overflow: hidden;
+            background: #e9e3d8;
+
+            svg {
+                display: block;
+                width: 100%;
+                height: 100%;
+            }
+
+            &.front {
+                transform: rotateY(180deg);
+            }
+        }
+
+        .number {
+            font-family: var(--numeral);
+            font-weight: 600;
+            font-size: 92px;
+        }
+
+        .blade {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font: inherit;
+            text-transform: uppercase;
+            font-weight: 600;
+            font-size: .78rem;
+            letter-spacing: .1em;
+            color: var(--gold);
+            background: rgba(0, 0, 0, .25);
+            border: 1px solid var(--gold-dim);
+            border-radius: 999px;
+            padding: 7px 13px;
+            cursor: pointer;
+            transition: opacity .2s, background .2s;
+
+            svg {
+                width: 14px;
+                height: 14px;
+            }
+
+            &:hover:not(:disabled) {
+                background: rgba(201, 162, 74, .12);
+            }
+
+            &:disabled {
+                opacity: .28;
+                cursor: default;
+            }
+        }
+
+        button:focus-visible {
+            outline: 2px solid var(--gold);
+            outline-offset: 4px;
+        }
+
+        @keyframes deal {
+            from {
+                transform: translate(30%, -60%) rotate(8deg) scale(.6);
+                opacity: 0;
+            }
         }
     </style>
 </head>
 <body>
 
-<button id="roll">🎲</button>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-sword" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M12 1.5 14 4.5V15h-4V4.5Z M5 15h14v2.2H5Z M11 17.2h2V21h-2Z"/>
+        <circle fill="currentColor" cx="12" cy="22" r="1.6"/>
+    </symbol>
+    <symbol id="i-tower" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M4.5 23V4h3v3h3V4h3v3h3V4h3v19h-5.5v-5a2 2 0 0 0-4 0v5Z"/>
+    </symbol>
+    <symbol id="i-skull" viewBox="0 0 24 24">
+        <path fill="currentColor" fill-rule="evenodd" d="M12 1.5C6.8 1.5 3.5 5.2 3.5 10c0 3 1.5 5.2 3.8 6.3V21a1.5 1.5 0 0 0 1.5 1.5h6.4a1.5 1.5 0 0 0 1.5-1.5v-4.7c2.3-1.1 3.8-3.3 3.8-6.3 0-4.8-3.3-8.5-8.5-8.5ZM6.8 11a2.3 2.3 0 1 0 4.6 0 2.3 2.3 0 1 0-4.6 0Zm5.8 0a2.3 2.3 0 1 0 4.6 0 2.3 2.3 0 1 0-4.6 0ZM12 13.6l-1.3 2.4h2.6Zm-2.6 4.6h1.2v3h-1.2Zm2 0h1.2v3h-1.2Zm2 0h1.2v3h-1.2Z"/>
+    </symbol>
+    <symbol id="back" viewBox="0 0 200 300">
+        <rect width="200" height="300" fill="#5b1513"/>
+        <rect x="10" y="10" width="180" height="280" rx="8" fill="none" stroke="#c9a24a" stroke-opacity=".6" stroke-width="1.5"/>
+    </symbol>
+</svg>
 
-<div id="result" class="hidden">
-    <div id="cards">
-        <span id="first"></span>
-        <!--        <hr/>-->
-        <div id="stack"></div>
-        <span id="second"></span>
-    </div>
-</div>
+<header class="wrap">
+    <h1>Tides of Battle</h1>
+</header>
+
+<main class="wrap table">
+    <section class="seat">
+        <div class="role">Атакующий</div>
+        <button class="card" id="card-attacker" aria-label="Карта атакующего">
+            <div class="inner">
+                <div class="face back"><svg viewBox="0 0 200 300"><use href="#back"/></svg></div>
+                <div class="face front"></div>
+            </div>
+        </button>
+        <button class="blade" id="blade-attacker" disabled><svg viewBox="0 0 24 24"><use href="#i-sword"/></svg>Клинок</button>
+    </section>
+    <section class="seat">
+        <div class="role">Защитник</div>
+        <button class="card" id="card-defender" aria-label="Карта защитника">
+            <div class="inner">
+                <div class="face back"><svg viewBox="0 0 200 300"><use href="#back"/></svg></div>
+                <div class="face front"></div>
+            </div>
+        </button>
+        <button class="blade" id="blade-defender" disabled><svg viewBox="0 0 24 24"><use href="#i-sword"/></svg>Клинок</button>
+    </section>
+</main>
+
+<footer></footer>
 
 <script>
     function getRandomInt(max) {
@@ -77,7 +264,6 @@
 
     function shuffle(array) {
         for (let i = array.length - 1; i > 0; i--) {
-            // const j = Math.floor(Math.random() * (i + 1));
             const j = getRandomInt(i);
             [array[i], array[j]] = [array[j], array[i]]
         }
@@ -85,46 +271,60 @@
     }
 
     const deck = [
-        '+0',
-        '+0',
-        '+0',
-        '+0',
-        '+0',
-        '+0',
-        '+0',
-        '+0',
-        '+0 💀',
-        '+0 💀',
-        '+1 🏰',
-        '+1 🏰',
-        '+1 🏰',
-        '+1 🏰',
-        '+1 🗡️',
-        '+1 🗡️',
-        '+1 🗡️',
-        '+1 🗡️',
-        '+2',
-        '+2',
-        '+2',
-        '+2',
-        '+3',
-        '+3',
+        '+0', '+0', '+0', '+0', '+0', '+0', '+0', '+0',
+        '+0 💀', '+0 💀',
+        '+1 🏰', '+1 🏰', '+1 🏰', '+1 🏰',
+        '+1 🗡️', '+1 🗡️', '+1 🗡️', '+1 🗡️',
+        '+2', '+2', '+2', '+2',
+        '+3', '+3',
     ]
 
-    document.getElementById('roll').addEventListener('click', () => {
-        shuffle(deck)
 
-        const shuffled = deck.slice().reverse().join(', ')
-        const firstCard = deck.pop()
-        const secondCard = deck.pop()
+    const icons = {'💀': 'skull', '🏰': 'tower', '🗡️': 'sword'}
 
-        document.getElementById('first').innerText = firstCard
-        document.getElementById('second').innerText = secondCard
+    const cards = document.querySelectorAll('.card')
+    const blades = document.querySelectorAll('.blade')
+    const flipMs = matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 560
+    let revealed = false
 
-        document.getElementById('roll').classList.add('hidden')
-        document.getElementById('result').classList.remove('hidden')
+    function wait(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms))
+    }
 
-        window.stack.innerHTML = shuffled
+    function renderFace(card, value) {
+        const [power, icon] = value.split(' ')
+        const top = icon ? 14 : 80
+        card.querySelector('.front').innerHTML = `
+            <svg viewBox="0 0 200 300">
+                <rect x="9" y="9" width="182" height="282" rx="7" fill="none" stroke="#2b2622" stroke-opacity=".3"/>
+                <text class="number" x="100" y="${top + 92}" text-anchor="middle"><tspan fill="#7a1418" font-size=".6em" dy="-.2em">+</tspan><tspan fill="#2b2622" dy=".12em" dx=".04em">${power.slice(1)}</tspan></text>
+                ${icon ? `
+                <path d="M62 146H142" stroke="#7a1418" stroke-opacity=".5"/>
+                <use href="#i-${icons[icon]}" x="70" y="170" width="64" height="64" color="${icon === '💀' ? '#8e1a1d' : '#2b2622'}"/>` : ''}
+            </svg>`
+    }
+
+    function revealCards() {
+        cards.forEach(c => c.classList.add('revealed'))
+        revealed = true
+        blades.forEach(b => b.disabled = false)
+    }
+
+    cards.forEach(c => c.addEventListener('click', () => revealed || revealCards()))
+
+    blades.forEach(b => b.addEventListener('click', async () => {
+        const card = document.getElementById(b.id.replace('blade', 'card'))
+        blades.forEach(b => b.disabled = true)
+        card.classList.remove('revealed')
+        await wait(flipMs)
+        renderFace(card, pile.pop())
+        card.classList.add('revealed')
+    }))
+
+    const pile = shuffle(deck.slice())
+    cards.forEach(c => {
+        renderFace(c, pile.pop())
+        c.classList.add('dealt')
     })
 </script>
 
